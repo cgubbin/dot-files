@@ -1,0 +1,34 @@
+{ ... }:
+{
+  imports = [
+    ./cmp.nix
+    ./conform.nix
+    ./comment.nix
+    ./dap.nix
+    ./dressing.nix
+    ./flash.nix
+    ./harpoon.nix
+    ./indent-blankline.nix
+    ./lazy-git.nix
+    ./leap.nix
+    ./lsp.nix
+    ./lualine.nix
+    ./neo-tree.nix
+    ./neotest.nix
+    ./obsidian.nix
+    ./oil.nix
+    ./rustaceanvim.nix
+    ./snacks.nix
+    ./surround.nix
+    ./telescope.nix
+    ./tmux-navigator.nix
+    ./todo.nix
+    ./treesitter.nix
+    ./trouble.nix
+    ./twilight.nix
+    ./undotree.nix
+    ./which-key.nix
+    ./wrapping.nix
+    ./zen_mode.nix
+  ];
+}
