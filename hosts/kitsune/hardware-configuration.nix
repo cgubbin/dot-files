@@ -18,6 +18,13 @@
       fsType = "ext4";
     };
 
+  fileSystems."/mnt/Media" =
+    { device = "/dev/disk/by-uuid/955df379-9988-4bf1-8b25-faa9cc0f4aa0";
+      fsType = "ext4";
+      options = [ "nofail" ];
+    };
+
+
   boot.initrd.luks.devices."luks-537c30d5-d4b6-4f51-a046-52977a57e5ab".device = "/dev/disk/by-uuid/537c30d5-d4b6-4f51-a046-52977a57e5ab";
 
   fileSystems."/boot" =
