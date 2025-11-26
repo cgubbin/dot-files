@@ -6,7 +6,7 @@
     ./bottom.nix
     ./tools.nix
     ./navi.nix
-    # ./nvtop.nix
+    ./nvtop.nix
     ./skim.nix
     ./yazi.nix
     ./zoxide.nix
