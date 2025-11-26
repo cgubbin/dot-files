@@ -29,6 +29,8 @@ in
 				albert = lib.getExe pkgs.albert;
 			in
 			''
+windowrulev2 = float,class:(1Password)
+
 exec-once = ${swaync};
 exec-once = ${copyq};
 exec-once = ${albert};
@@ -142,7 +144,7 @@ $crustAlpha = 181926
         			numlock_by_default = true;
         			kb_options = "ctrl:nocaps";
         			touchpad = {
-          				disable_while_typing = false;
+          				disable_while_typing = true;
           				natural_scroll = false;
         			};
       			};
