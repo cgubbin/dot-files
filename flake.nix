@@ -37,6 +37,10 @@
       	    inputs.nixpkgs.follows = "nixpkgs";	
 	    };
         impermanence.url = "github:nix-community/impermanence";
+        nix-secrets = {
+            url = "git+ssh://git@github.com/cgubbin/nix-secrets?shallow=1&ref=main";
+            flake = false;
+        };
     };
 
     outputs = {
