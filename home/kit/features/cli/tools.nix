@@ -62,6 +62,8 @@ in
       nixd
       nixfmt-rfc-style
       statix
+
+      age
     ]
   );
   programs.eza = {
