@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./sops.nix
       ../common/optional/fingerprint-scanner.nix
       ../common/optional/hyprland.nix
       ../common/optional/niri.nix
@@ -44,11 +45,13 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  users.mutableUsers = false;
   users.users.kit = {
     isNormalUser = true;
     description = "Christopher Gubbin";
     extraGroups = [ "networkmanager" "wheel" ];
     shell = pkgs.fish;
+    hashedPasswordFile = config.sops.secrets.kitsune_passwd.path;
     };
 
   # Enable the KDE Plasma Desktop Environment.
