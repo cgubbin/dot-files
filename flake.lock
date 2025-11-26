@@ -402,6 +402,24 @@
         "type": "github"
       }
     },
+    "nix-secrets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1764177991,
+        "narHash": "sha256-Sbqd2jJz4Fqsm0UiaW94VI/yFCro8Pb66GcGUDiavMo=",
+        "ref": "main",
+        "rev": "187988980e57152ad797185dac6ad9d6f4f2a4e0",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/cgubbin/nix-secrets"
+      },
+      "original": {
+        "ref": "main",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/cgubbin/nix-secrets"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1763421233,
@@ -543,6 +561,7 @@
         "impermanence": "impermanence",
         "niri": "niri",
         "nix-index-database": "nix-index-database",
+        "nix-secrets": "nix-secrets",
         "nixpkgs": "nixpkgs",
         "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim",

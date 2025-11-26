@@ -56,6 +56,7 @@
         nixvim,
 	    firefox-addons,
         impermanence,
+        nix-secrets,
         ...
     }:
     let

@@ -45,17 +45,11 @@
   networking.networkmanager.enable = true;
 
   users.users.kit = {
-    				isNormalUser = true;
-    				description = "Christopher Gubbin";
-    				extraGroups = [ "networkmanager" "wheel" ];
-    				packages = with pkgs; [
-      					git
-      					git-crypt
-      					gnupg
-      					just
-    				];
-				shell = pkgs.fish;
-			};
+    isNormalUser = true;
+    description = "Christopher Gubbin";
+    extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.fish;
+    };
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
