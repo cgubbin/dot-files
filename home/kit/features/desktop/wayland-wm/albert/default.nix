@@ -27,7 +27,7 @@ in
     in
     mkIf cfg.wayland.enable {
       # out of store while still in the learning phase
-      "albert/config".source = config.lib.file.mkOutOfStoreSymlink "${dir}/config.toml";
+      "albert/config.toml".source = config.lib.file.mkOutOfStoreSymlink "${dir}/config.toml";
       "albert/websearch/engines.json".source =
         config.lib.file.mkOutOfStoreSymlink "${dir}/websearch-engines.json";
     };
