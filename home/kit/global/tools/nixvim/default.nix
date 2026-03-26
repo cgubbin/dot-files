@@ -2,8 +2,7 @@
   pkgs,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     inputs.nixvim.homeModules.nixvim
     ./completion.nix
@@ -14,8 +13,9 @@
   ];
 
   programs.nixvim = {
-  	enable = true;
-  	vimdiffAlias = true;
-	impureRtp = true;
- };
+    enable = true;
+    vimdiffAlias = true;
+    impureRtp = true;
+    withPython3 = true;
+  };
 }

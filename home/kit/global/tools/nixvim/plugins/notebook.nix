@@ -34,19 +34,20 @@ in {
 
       molten = {
         enable = true;
-        autoLoad = false;
+        autoLoad = true;
         settings = {
           auto_open_output = false;
           wrap_output = true;
           virt_text_output = true;
           virt_lines_off_by_1 = true;
           output_win_max_height = 12;
-          image_provider = "image.nvim";
+          image_provider = "none";
         };
       };
 
       image = {
         enable = true;
+        autoLoad = true;
         settings = {
           backend = "kitty";
           integrations = {
@@ -68,6 +69,7 @@ in {
 
       hydra = {
         enable = true;
+        autoLoad = true;
 
         hydras = [
           {
@@ -78,35 +80,103 @@ in {
             config = {
               color = "pink";
               invoke_on_body = true;
-              hint = {
-              };
             };
 
             hint = ''
-              _j_/_k_: move down/up   _e_: eval operator
-              _r_: re-eval cell       _o_: open output
-              _h_: hide output
-              ^^      _<esc>_/_q_: exit
+              _j_: run cell         _l_: run line
+              _a_: run above        _A_: run all
+              _r_: re-eval cell     _o_: open output
+              _h_: hide output      _x_: browser output
+              _i_: molten init      _R_: restart kernel
+              ^^                    _<esc>_/_q_: exit
             '';
 
             heads = [
-              ["j" "]b"]
-              ["k" "[b"]
-              ["e" "<cmd>MoltenEvaluateOperator<cr>"]
+              [
+                "j"
+                ''
+                  function()
+                    require("quarto.runner").run_cell()
+                  end
+                ''
+                {
+                  expr = false;
+                }
+              ]
+              [
+                "l"
+                ''
+                  function()
+                    require("quarto.runner").run_line()
+                  end
+                ''
+                {
+                  expr = false;
+                }
+              ]
+              [
+                "a"
+                ''
+                  function()
+                    require("quarto.runner").run_above()
+                  end
+                ''
+                {
+                  expr = false;
+                }
+              ]
+              [
+                "A"
+                ''
+                  function()
+                    require("quarto.runner").run_all()
+                  end
+                ''
+                {
+                  expr = false;
+                }
+              ]
               ["r" "<cmd>MoltenReevaluateCell<cr>"]
               ["o" "<cmd>noautocmd MoltenEnterOutput<cr>"]
               ["h" "<cmd>MoltenHideOutput<cr>"]
+              ["x" "<cmd>MoltenOpenInBrowser<cr>"]
+              ["i" "<cmd>MoltenInit<cr>"]
+              ["R" "<cmd>MoltenRestart!<cr>"]
               ["<esc>" null {exit = true;}]
               ["q" null {exit = true;}]
             ];
           }
         ];
       };
+
+      which-key.settings.spec = [
+        {
+          __unkeyed-1 = "<localleader>m";
+          group = "Molten";
+        }
+        {
+          __unkeyed-1 = "<localleader>q";
+          group = "Quarto";
+        }
+        {
+          __unkeyed-1 = "<localleader>r";
+          group = "Run";
+        }
+      ];
     };
 
     extraConfigLuaPre = ''
       require("otter.config")
       OtterConfig = vim.tbl_deep_extend("force", OtterConfig or {}, {})
+      vim.cmd("packadd molten-nvim")
+      -- Force molten python path into PYTHONPATH
+      local molten_paths = vim.api.nvim_get_runtime_file("rplugin/python3", true)
+
+      for _, p in ipairs(molten_paths) do
+        if p:match("molten%-nvim") then
+          vim.env.PYTHONPATH = (vim.env.PYTHONPATH or "") .. ":" .. p
+        end
+      end
     '';
 
     extraConfigLua = ''
@@ -145,7 +215,7 @@ in {
         if file then
           file:write(default_notebook)
           file:close()
-          vim.cmd("edit " .. path)
+          vim.cmd("edit " .. vim.fn.fnameescape(path))
         else
           vim.notify("Could not create notebook: " .. path, vim.log.levels.ERROR)
         end
@@ -162,6 +232,14 @@ in {
         pattern = { "quarto", "markdown" },
         callback = function(args)
           local buf = args.buf
+          local ft = vim.bo[buf].filetype
+
+          if ft == "markdown" then
+            pcall(function()
+              require("quarto").activate()
+            end)
+          end
+
           local map = function(mode, lhs, rhs, desc)
             vim.keymap.set(mode, lhs, rhs, {
               buffer = buf,
@@ -174,22 +252,39 @@ in {
           vim.opt_local.spell = true
           vim.opt_local.conceallevel = 2
 
-          map("n", "]b", "]b", "Next code cell")
-          map("n", "[b", "[b", "Previous code cell")
-
+          -- Molten kernel management
           map("n", "<localleader>mi", "<cmd>MoltenInit<cr>", "Molten init")
           map("n", "<localleader>mr", "<cmd>MoltenRestart!<cr>", "Molten restart kernel")
           map("n", "<localleader>mI", "<cmd>MoltenInterrupt<cr>", "Molten interrupt kernel")
 
-          map("n", "<localleader>e", "<cmd>MoltenEvaluateOperator<cr>", "Molten evaluate operator")
-          map("v", "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv", "Molten evaluate visual")
-          map("n", "<localleader>rr", "<cmd>MoltenReevaluateCell<cr>", "Molten re-evaluate cell")
+          -- Quarto runner / notebook execution
+          map("n", "<localleader>rc", function()
+            require("quarto.runner").run_cell()
+          end, "Run cell")
 
+          map("n", "<localleader>ra", function()
+            require("quarto.runner").run_above()
+          end, "Run cell and above")
+
+          map("n", "<localleader>rA", function()
+            require("quarto.runner").run_all()
+          end, "Run all cells")
+
+          map("n", "<localleader>rl", function()
+            require("quarto.runner").run_line()
+          end, "Run line")
+
+          map("v", "<localleader>r", function()
+            require("quarto.runner").run_range()
+          end, "Run visual range")
+
+          -- Molten output controls
           map("n", "<localleader>mo", "<cmd>noautocmd MoltenEnterOutput<cr>", "Molten open output")
           map("n", "<localleader>mh", "<cmd>MoltenHideOutput<cr>", "Molten hide output")
           map("n", "<localleader>md", "<cmd>MoltenDelete<cr>", "Molten delete cell")
           map("n", "<localleader>mx", "<cmd>MoltenOpenInBrowser<cr>", "Molten open output in browser")
 
+          -- Quarto document commands
           map("n", "<localleader>qp", "<cmd>QuartoPreview<cr>", "Quarto preview")
           map("n", "<localleader>qr", "<cmd>QuartoRender<cr>", "Quarto render")
         end,
@@ -226,7 +321,7 @@ in {
     autoCmd = [
       {
         event = "FileType";
-        pattern = ["quarto"];
+        pattern = ["quarto" "markdown"];
         callback.__raw = ''
           function()
             vim.opt_local.wrap = true
@@ -234,17 +329,6 @@ in {
             vim.opt_local.conceallevel = 2
           end
         '';
-      }
-    ];
-
-    plugins.which-key.settings.spec = [
-      {
-        __unkeyed-1 = "<localleader>m";
-        group = "Molten";
-      }
-      {
-        __unkeyed-1 = "<localleader>q";
-        group = "Quarto";
       }
     ];
   };
