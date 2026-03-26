@@ -99,6 +99,14 @@
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+    ];
+  };
+
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "iHD";
+    MOZ_ENABLE_WAYLAND = "1";
   };
 
   # Load nvidia driver for Xorg and Wayland

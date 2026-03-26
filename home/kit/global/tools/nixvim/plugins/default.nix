@@ -6,6 +6,7 @@
     ./dap.nix
     ./dressing.nix
     ./flash.nix
+    ./gitsigns.nix
     ./harpoon.nix
     ./indent-blankline.nix
     ./lazy-git.nix
@@ -13,11 +14,11 @@
     ./lsp.nix
     ./lualine.nix
     ./neo-tree.nix
-    ./neotest.nix
+    ./neotest
     ./notebook.nix
     ./obsidian.nix
     ./oil.nix
-    ./overseer.nix
+    ./overseer
     ./persistence.nix
     ./rustaceanvim.nix
     ./snacks.nix

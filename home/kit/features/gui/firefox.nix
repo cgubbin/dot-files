@@ -317,6 +317,15 @@ in {
         "extensions.formautofill.creditCards.available" = false;
         "extensions.formautofill.creditCards.enabled" = false;
         "extensions.formautofill.heuristics.enabled" = false;
+
+        # acceleration
+        "gfx.webrender.all" = true;
+        "gfx.webrender.software" = false;
+        "media.ffmpeg.vaapi.enabled" = true;
+        "media.rdd-ffvpx.enabled" = false;
+        "media.hardware-video-decoding.force-enabled" = true;
+        "layers.acceleration.disabled" = false;
+        "layers.acceleration.force-enabled" = true;
       };
     };
   };

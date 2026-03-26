@@ -456,6 +456,43 @@
         end
       '';
 
+      gcommit.body = ''
+        if test (count $argv) -eq 0
+          git commit
+        else
+          git commit -m "$argv[1]"
+        end
+      '';
+
+      gfixup.body = ''
+        set -l commit (
+          git log --oneline --decorate \
+          | fzf --prompt 'fixup> ' --preview 'echo {} | cut -d" " -f1 | xargs git show --color=always'
+        )
+
+        if test -z "$commit"
+          return 0
+        end
+
+        set -l hash (string split ' ' -- "$commit")[1]
+        git commit --fixup "$hash"
+      '';
+
+      gunstage.body = ''
+        set -l files (
+          git diff --name-only --cached \
+          | fzf --multi --prompt 'unstage> ' --preview 'git diff --cached --color=always -- {}'
+        )
+
+        if test -z "$files"
+          return 0
+        end
+
+        for f in (string split \n -- "$files")
+          git restore --staged -- "$f"
+        end
+      '';
+
       __zj_project_kind_for_dir.body = ''
         set -l dir "$argv[1]"
         set -l rel (string replace "$HOME/" "" -- "$dir")
@@ -873,6 +910,7 @@
       git = lib.getExe pkgs.git;
       bandwhich = lib.getExe pkgs.bandwhich;
       procs = lib.getExe pkgs.procs;
+      lazygit = lib.getExe pkgs.lazygit;
     in {
       which = "readlink -f (type -p $argv)";
       rebuild-dagon = "cd /home/louis/src/nixos-config && nixos-rebuild switch --flake .#dagon --target-host louis@dagon --use-remote-sudo --impure";
@@ -885,6 +923,8 @@
       lss = "ls --total-size";
       lst = "ls --tree";
       lsg = "ls --git";
+
+      lg = lazygit;
 
       cat = bat;
       tree = broot;
