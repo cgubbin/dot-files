@@ -1,7 +1,9 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   imports = [
     ./common.nix
-    (if pkgs.stdenv.isLinux then ./linux.nix else ./darwin.nix)
+    ./darwin.nix
+    ./firefox.nix
+    ./kitty.nix
+    ./linux.nix
   ];
 }

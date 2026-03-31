@@ -1,9 +1,16 @@
 {
+  pkgs,
+  lib,
   ...
 }:
+let
+  inherit (lib) mkIf;
+in
 {
-  home = {
-    homeDirectory = "/Users/kit";
+  config = mkIf pkgs.stdenv.isDarwin {
+    home = {
+      homeDirectory = "/Users/kit";
+    };
   };
 
 }

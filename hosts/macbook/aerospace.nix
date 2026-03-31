@@ -1,23 +1,8 @@
+{ pkgs, ... }:
 {
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-let
-  inherit (lib) mkIf;
-  cfg = config.home-config.gui;
-in
-{
-
-  programs.aerospace = mkIf cfg.utils.enable {
+  services.aerospace = {
     enable = true;
     package = pkgs.aerospace;
-
-    launchd = {
-      enable = true;
-      keepAlive = true;
-    };
 
     settings = {
       enable-normalization-flatten-containers = false;

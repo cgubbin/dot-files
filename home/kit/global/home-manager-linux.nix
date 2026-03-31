@@ -1,10 +1,17 @@
 {
+  pkgs,
+  lib,
   ...
 }:
+let
+  inherit (lib) mkIf;
+in
 {
-  home = {
-    sessionVariables = {
-      MOZ_ENABLE_WAYLAND = "1";
+  config = mkIf pkgs.stdenv.isLinux {
+    home = {
+      sessionVariables = {
+        MOZ_ENABLE_WAYLAND = "1";
+      };
     };
   };
 }

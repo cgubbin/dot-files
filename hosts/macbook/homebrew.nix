@@ -1,44 +1,43 @@
-{ ... }:
-{
+{...}: {
   homebrew = {
     enable = true;
     onActivation = {
-      cleanup = "none";
+      cleanup = "zap";
       # this sucks, as the entire homebrew does. gah
       autoUpdate = true;
       upgrade = true;
     };
     global.autoUpdate = true;
-    caskArgs.no_quarantine = true;
+    # caskArgs.no_quarantine = true;
     brews = [
       "hdf5"
       "gnuplot"
     ];
     casks = [
-      # "1password"
+      "1password"
       # "aerospace"
       "alfred"
       # "amethyst"
-      # "caffeine"
+      "caffeine"
       # "arc"
-      # "drawio"
-      # "elgato-wave-link"
-      # "firefox"
-      # "ghostty"
+      "drawio"
+      "elgato-wave-link"
+      "firefox"
+      "ghostty"
       # "google-chrome"
       # "hiddenbar"
-      # "karabiner-elements"
-      # "keymapp"
-      # "mactex-no-gui"
+      "karabiner-elements"
+      "keymapp"
+      "mactex-no-gui"
       # "obs"
-      # "obsidian"
+      "obsidian"
       # "pdf-expert"
-      # "protonvpn"
+      "protonvpn"
       # "sf-symbols"
-      # "vlc"
+      "vlc"
       # "zed"
       # "zoom"
-      # "zotero"
+      "zotero"
       # "the-unarchiver"
     ];
   };

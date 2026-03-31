@@ -1,6 +1,7 @@
 {
-  lib,
   config,
+  pkgs,
+  lib,
   ...
 }:
 let
@@ -8,4 +9,17 @@ let
   cfg = config.home-config.gui;
 in
 {
+  home.packages = mkIf (cfg.utils.enable && pkgs.stdenv.isLinux) (
+    with pkgs;
+    [
+      _1password-gui
+      drawio
+      keymapp
+      obsidian
+      protonvpn-gui
+      vlc
+      zed-editor
+      zotero
+    ]
+  );
 }

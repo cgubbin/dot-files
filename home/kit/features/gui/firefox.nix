@@ -39,6 +39,7 @@ in {
   stylix.targets.firefox.profileNames = ["kit"];
   programs.firefox = mkIf cfg.firefox.enable {
     enable = true;
+    profileVersion = null;
     package = pkgs.firefox.override {
       nativeMessagingHosts = [
         # Tridactyl native connector

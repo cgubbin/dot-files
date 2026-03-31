@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf optionals;
   cfg = config.home-config.cli;
 in
 {

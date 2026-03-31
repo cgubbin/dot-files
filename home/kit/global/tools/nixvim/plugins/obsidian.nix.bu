@@ -4,20 +4,38 @@
       enable = true;
       autoLoad = true;
 
+      # Keep this simple until everything is stable.
       lazyLoad = {
-        enable = true;
-        settings = {
-          ft = ["markdown"];
-        };
+        enable = false;
       };
 
       settings = {
-        completion = {
-          min_chars = 2;
-          nvim_cmp = true;
-        };
+        legacy_commands = false;
 
         workspaces = [
+          {
+            name = "sensorium";
+            path = "${config.home.homeDirectory}/obsidian/main/Sensorium";
+            overrides = {
+              notes_subdir = "inbox";
+
+              templates = {
+                folder = "00_System/templates";
+                date_format = "%Y-%m-%d";
+                time_format = "%H:%M";
+                substitutions = {
+                  area = "sensorium";
+                };
+              };
+
+              daily_notes = {
+                folder = "daily";
+                date_format = "%Y-%m-%d";
+                alias_format = "%B %-d, %Y";
+                template = "daily.md";
+              };
+            };
+          }
           {
             name = "metrology";
             path = "${config.home.homeDirectory}/obsidian/main/Metrology";
@@ -66,6 +84,11 @@
           }
         ];
 
+        completion = {
+          min_chars = 2;
+          nvim_cmp = true;
+        };
+
         new_notes_location = "notes_subdir";
         notes_subdir = "inbox";
 
@@ -95,13 +118,16 @@
         };
 
         preferred_link_style = "wiki";
-        sort_by = "modified";
-        sort_reversed = true;
+        search.sort_by = "modified";
+        search.sort_reversed = true;
 
-        note_frontmatter_func.__raw = ''
+        frontmatter.func.__raw = ''
           function(note)
             local client = require("obsidian").get_client()
-            local ws = client and client.current_workspace or nil
+            if not client then
+              return {}
+            end
+            local ws = client and client:get_workspace() or nil
             local workspace_name = ws and ws.name or "unknown"
             local now = os.date("!%Y-%m-%dT%H:%M:%SZ")
 
@@ -115,6 +141,7 @@
               out.title = note.title
             end
 
+            -- Preserve any existing/custom metadata.
             if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
               for k, v in pairs(note.metadata) do
                 out[k] = v
@@ -153,7 +180,7 @@
     };
 
     keymaps = [
-      # Find or open
+      # Find / open
       {
         mode = "n";
         key = "<leader>of";
@@ -172,6 +199,12 @@
         action = "<cmd>Obsidian open<cr>";
         options.desc = "Open in Obsidian";
       }
+      {
+        mode = "n";
+        key = "<leader>ow";
+        action = "<cmd>Obsidian workspace<cr>";
+        options.desc = "Switch workspace";
+      }
 
       # Create
       {
@@ -186,6 +219,14 @@
         action = "<cmd>Obsidian new_from_template<cr>";
         options.desc = "New note from template";
       }
+      {
+        mode = "n";
+        key = "<leader>oT";
+        action = "<cmd>Obsidian template<cr>";
+        options.desc = "Insert template";
+      }
+
+      # Daily notes
       {
         mode = "n";
         key = "<leader>od";
@@ -210,19 +251,25 @@
         action = "<cmd>Obsidian dailies<cr>";
         options.desc = "Daily notes";
       }
+
+      # Navigation / structure
       {
         mode = "n";
-        key = "<leader>oT";
-        action = "<cmd>Obsidian template<cr>";
-        options.desc = "Insert template";
+        key = "<leader>ol";
+        action = "<cmd>Obsidian follow_link<cr>";
+        options.desc = "Follow link";
       }
-
-      # Navigate or inspect
       {
         mode = "n";
         key = "<leader>ob";
         action = "<cmd>Obsidian backlinks<cr>";
         options.desc = "Backlinks";
+      }
+      {
+        mode = "n";
+        key = "<leader>oL";
+        action = "<cmd>Obsidian links<cr>";
+        options.desc = "Links";
       }
       {
         mode = "n";
@@ -232,15 +279,15 @@
       }
       {
         mode = "n";
-        key = "<leader>ol";
-        action = "<cmd>Obsidian links<cr>";
-        options.desc = "Links";
-      }
-      {
-        mode = "n";
         key = "<leader>oc";
         action = "<cmd>Obsidian toggle_checkbox<cr>";
         options.desc = "Toggle checkbox";
+      }
+      {
+        mode = "n";
+        key = "<leader>oC";
+        action = "<cmd>Obsidian toc<cr>";
+        options.desc = "Table of contents";
       }
 
       # Maintenance
@@ -250,13 +297,8 @@
         action = "<cmd>Obsidian rename<cr>";
         options.desc = "Rename note";
       }
-      {
-        mode = "n";
-        key = "<leader>ow";
-        action = "<cmd>Obsidian workspace<cr>";
-        options.desc = "Switch workspace";
-      }
     ];
+
     autoCmd = [
       {
         event = ["BufReadPost" "BufNewFile"];

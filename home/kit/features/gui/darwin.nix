@@ -9,12 +9,10 @@ let
   cfg = config.home-config.gui;
 in
 {
-  imports = [ ./aerospace.nix ];
-  home.packages = mkIf cfg.utils.enable (
-    with pkgs;
-    [
-      caffeine
+  config = mkIf (pkgs.stdenv.isDarwin && cfg.utils.enable) {
+    home.packages = with pkgs; [
+      # caffeine
       karabiner-elements
-    ]
-  );
+    ];
+  };
 }

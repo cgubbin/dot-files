@@ -7,7 +7,6 @@
 
   home-config = {
     desktop = {
-      stylix.enable = true;
       wayland = {
         enable = false;
         hyprland = {
@@ -15,6 +14,9 @@
           nvidia = false;
         };
       };
+    };
+    theme = {
+      stylix.enable = true;
     };
     custom-fonts = {
       dankMono.enable = true;
@@ -37,6 +39,7 @@
         devices = {
           kitsune = "HXOHUD3-C6C4SU6-DMAPHVY-XCENNLS-EZ4WETQ-X45DESC-MSJ567J-MUCF5QF";
           iphone = "R4O26BK-AQAQMV4-WEVYSWD-2CNV6KN-JWTU7JA-36MDCL6-KEBPTVO-6O2P6AX";
+          macbook = "BMVUX2J-YQOZ5G5-YR7FFDB-NBVFNUX-47KBBTR-3BSQ2TL-GAKVBY3-GFYDMA3";
         };
         folders = {
           obsidian = {

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -8,15 +9,15 @@ let
   cfg = config.home-config.desktop.wayland;
 in
 {
-  wayland.windowManager.hyprland.settings = mkIf cfg.hyprland.enable {
+  wayland.windowManager.hyprland.settings = mkIf (cfg.hyprland.enable && pkgs.stdenv.isLinux) {
     general = {
       gaps_in = 5;
       gaps_out = 10;
       border_size = 2;
       layout = "dwindle";
       # col = {
-      	# active_border = "$teal";
-	# inactive_border = "$surface1";
+      # active_border = "$teal";
+      # inactive_border = "$surface1";
       # };
     };
 
@@ -36,8 +37,8 @@ in
         enabled = true;
         range = 12;
         offset = "0 0";
-	# color = "$teal";
-	# color_inactive = "0xff$baseAlpha";
+        # color = "$teal";
+        # color_inactive = "0xff$baseAlpha";
       };
     };
     # layerrule = "blur, logout_dialog";
@@ -64,9 +65,9 @@ in
       ];
     };
     dwindle = {
-	pseudotile = true;
-    	preserve_split = true;
-    	smart_split = true;
+      pseudotile = true;
+      preserve_split = true;
+      smart_split = true;
     };
   };
 }

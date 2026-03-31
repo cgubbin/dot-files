@@ -30,7 +30,7 @@ in
       devices = mapAttrs (_name: id: { inherit id; }) cfg.devices;
 
       folders = mapAttrs (_folderName: folderCfg: {
-        label = folderCfg.label or _folderName;
+        label = if folderCfg.label == null then _folderName else folderCfg.label;
         path = "${homeDir}/${folderCfg.path}";
         devices = folderCfg.devices;
 

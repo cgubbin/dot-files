@@ -28,7 +28,7 @@ in
     ]
   );
 
-  programs.lazygit = mkIf cfg.devtools.enable {
+  programs.lazygit = mkIf cfg.devTools.enable {
     enable = true;
     settings.git = {
       overrideGpg = true;

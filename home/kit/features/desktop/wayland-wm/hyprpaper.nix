@@ -1,7 +1,16 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
+  inherit (lib) mkIf;
   cfg = config.home-config.desktop;
+  enabled = cfg.wayland.hyprland.enable && pkgs.stdenv.isLinux;
 in
 {
-  services.hyprpaper.enable = cfg.wayland.hyprland.enable;
+  config = mkIf enabled {
+    services.hyprpaper.enable = true;
+  };
 }

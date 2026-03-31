@@ -4,7 +4,6 @@
       enable = true;
       autoLoad = true;
 
-      # Keep this simple until everything is stable.
       lazyLoad = {
         enable = false;
       };
@@ -15,16 +14,16 @@
         workspaces = [
           {
             name = "metrology";
-            path = "${config.home.homeDirectory}/obsidian/main/Metrology";
+            path = "${config.home.homeDirectory}/obsidian/main/Sensorium";
             overrides = {
               notes_subdir = "inbox";
 
               templates = {
-                folder = "templates";
+                folder = "00_System/templates";
                 date_format = "%Y-%m-%d";
                 time_format = "%H:%M";
                 substitutions = {
-                  area = "metrology";
+                  area = "sensorium";
                 };
               };
 
@@ -36,6 +35,29 @@
               };
             };
           }
+          # {
+          #   name = "metrology";
+          #   path = "${config.home.homeDirectory}/obsidian/main/Metrology";
+          #   overrides = {
+          #     notes_subdir = "inbox";
+
+          #     templates = {
+          #       folder = "templates";
+          #       date_format = "%Y-%m-%d";
+          #       time_format = "%H:%M";
+          #       substitutions = {
+          #         area = "metrology";
+          #       };
+          #     };
+
+          #     daily_notes = {
+          #       folder = "daily";
+          #       date_format = "%Y-%m-%d";
+          #       alias_format = "%B %-d, %Y";
+          #       template = "daily.md";
+          #     };
+          #   };
+          # }
           {
             name = "premed";
             path = "${config.home.homeDirectory}/obsidian/main/Premed/Premed";
@@ -43,7 +65,7 @@
               notes_subdir = "inbox";
 
               templates = {
-                folder = "templates";
+                folder = "99_TEMPLATES";
                 date_format = "%Y-%m-%d";
                 time_format = "%H:%M";
                 substitutions = {
@@ -101,7 +123,10 @@
         frontmatter.func.__raw = ''
           function(note)
             local client = require("obsidian").get_client()
-            local ws = client and client.current_workspace or nil
+            if not client then
+              return {}
+            end
+            local ws = rawget(_G, "Obsidian") and Obsidian.workspace or nil
             local workspace_name = ws and ws.name or "unknown"
             local now = os.date("!%Y-%m-%dT%H:%M:%SZ")
 
@@ -115,7 +140,6 @@
               out.title = note.title
             end
 
-            -- Preserve any existing/custom metadata.
             if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
               for k, v in pairs(note.metadata) do
                 out[k] = v
@@ -134,6 +158,25 @@
               if out.project == nil then out.project = "" end
               if out.instrument == nil then out.instrument = "" end
               if out.sample == nil then out.sample = "" end
+
+              if out.type == "patent" then
+                if out.source == nil then out.source = "model" end
+                if out.confidence == nil then out.confidence = "low" end
+                if out.review_status == nil then out.review_status = "unreviewed" end
+                if out.importance == nil then out.importance = 3 end
+                if out.primary_source == nil then out.primary_source = "patent_url" end
+                if out.patent_url == nil then out.patent_url = "" end
+                if out.pdf_path == nil then out.pdf_path = "" end
+                if out.pdf_url == nil then out.pdf_url = "" end
+                if out.key_pages == nil then out.key_pages = {} end
+                if out.modality == nil then out.modality = "unknown" end
+                if out.signal_type == nil then out.signal_type = {} end
+                if out.contrast_mechanism == nil then out.contrast_mechanism = {} end
+                if out.has_new_signal == nil then out.has_new_signal = false end
+                if out.has_new_geometry == nil then out.has_new_geometry = false end
+                if out.has_new_processing == nil then out.has_new_processing = false end
+                if out.ml_component == nil then out.ml_component = false end
+              end
             elseif workspace_name == "premed" then
               if out.area == nil then out.area = "premed" end
               if out.status == nil then out.status = "active" end
@@ -154,7 +197,6 @@
     };
 
     keymaps = [
-      # Find / open
       {
         mode = "n";
         key = "<leader>of";
@@ -180,7 +222,6 @@
         options.desc = "Switch workspace";
       }
 
-      # Create
       {
         mode = "n";
         key = "<leader>on";
@@ -199,8 +240,6 @@
         action = "<cmd>Obsidian template<cr>";
         options.desc = "Insert template";
       }
-
-      # Daily notes
       {
         mode = "n";
         key = "<leader>od";
@@ -226,7 +265,6 @@
         options.desc = "Daily notes";
       }
 
-      # Navigation / structure
       {
         mode = "n";
         key = "<leader>ol";
@@ -264,14 +302,113 @@
         options.desc = "Table of contents";
       }
 
-      # Maintenance
       {
         mode = "n";
         key = "<leader>or";
         action = "<cmd>Obsidian rename<cr>";
         options.desc = "Rename note";
       }
+
+      {
+        mode = "n";
+        key = "<leader>op";
+        action = "<cmd>OpenPatentSource<cr>";
+        options.desc = "Open patent source";
+      }
+      {
+        mode = "n";
+        key = "<leader>oP";
+        action = "<cmd>OpenPatentPdf<cr>";
+        options.desc = "Open patent PDF";
+      }
+      {
+        mode = "n";
+        key = "<leader>ov";
+        action = "<cmd>ValidatePatentNote<cr>";
+        options.desc = "Validate patent note";
+      }
+      {
+        mode = "n";
+        key = "<leader>o,";
+        action = "<cmd>SuggestPatentPdfPath<cr>";
+        options.desc = "Suggest patent PDF path";
+      }
+
+      {
+        mode = "n";
+        key = "<leader>oF";
+        action = "<cmd>NormalizePatentFrontmatter<cr>";
+        options.desc = "Normalize patent frontmatter";
+      }
+      {
+        mode = "n";
+        key = "<leader>o/";
+        action = "<cmd>PatentSearchMissing<cr>";
+        options.desc = "Search MISSING markers";
+      }
+      {
+        mode = "n";
+        key = "<leader>o?";
+        action = "<cmd>PatentSearchNovelty<cr>";
+        options.desc = "Search novelty notes";
+      }
+      {
+        mode = "n";
+        key = "<leader>oq";
+        action = "<cmd>PatentSearchOpenQuestions<cr>";
+        options.desc = "Search open questions";
+      }
+      {
+        mode = "n";
+        key = "<leader>oR";
+        action = "<cmd>PatentReviewSearch<cr>";
+        options.desc = "Patent review quickfix";
+      }
+      {
+        mode = "n";
+        key = "<leader>]m";
+        action = "<cmd>PatentNextMissing<cr>";
+        options.desc = "Next MISSING";
+      }
+      {
+        mode = "n";
+        key = "<leader>]g";
+        action = "<cmd>PatentNextSectionGap<cr>";
+        options.desc = "Next section heading";
+      }
+      {
+        mode = "v";
+        key = "<leader>ok";
+        action = "<cmd>PatentLink<cr>";
+        options.desc = "Insert wikilink";
+      }
+      {
+        mode = "v";
+        key = "<leader>oK";
+        action = "<cmd>PatentLinkCreate<cr>";
+        options.desc = "Insert wikilink and create note";
+      }
     ];
+
+    extraConfigLuaPost = ''
+      local patents = require("kit.functions.patents")
+
+      vim.api.nvim_create_user_command("OpenPatentSource", patents.open_patent_source, {})
+      vim.api.nvim_create_user_command("OpenPatentPdf", patents.open_patent_pdf, {})
+      vim.api.nvim_create_user_command("ValidatePatentNote", patents.validate_patent_note, {})
+      vim.api.nvim_create_user_command("PatentNormalizeFrontmatter", patents.normalize_frontmatter, {})
+      vim.api.nvim_create_user_command("SuggestPatentPdfPath", patents.suggest_patent_pdf_path, {})
+      vim.api.nvim_create_user_command("PatentLink", patents.insert_wikilink, { range = true })
+      vim.api.nvim_create_user_command("PatentLinkCreate", patents.insert_or_create_wikilink, { range = true })
+      vim.api.nvim_create_user_command("PatentSearchMissing", patents.search_missing, {})
+      vim.api.nvim_create_user_command("PatentSearchNovelty", patents.search_novelty, {})
+      vim.api.nvim_create_user_command("PatentSearchOpenQuestions", patents.search_open_questions, {})
+      vim.api.nvim_create_user_command("PatentReviewSearch", patents.review_search, {})
+      vim.api.nvim_create_user_command("PatentNextMissing", patents.next_missing, {})
+      vim.api.nvim_create_user_command("PatentNextSectionGap", patents.next_section_gap, {})
+
+      patents.register_autocmds()
+    '';
 
     autoCmd = [
       {
@@ -338,6 +475,11 @@
             end
 
             vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+
+            local ok, patents = pcall(require, "kit.functions.patents")
+            if ok then
+              patents.validate_current_on_save()
+            end
           end
         '';
       }

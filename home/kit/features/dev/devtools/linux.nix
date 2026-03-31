@@ -9,7 +9,7 @@ let
   cfg = config.home-config.dev;
 in
 {
-  services.ollama = mkIf cfg.devTools.enable {
+  services.ollama = mkIf (cfg.devTools.enable && pkgs.stdenv.isLinux) {
     enable = true;
     # acceleration = "cuda";
     package = pkgs.ollama-cpu;

@@ -240,11 +240,12 @@
                     inherit (self) inputs outputs;
                   };
                   ### LEGACY. KEEP OR REMOVE
-                  useGlobalPkgs = true;
+                  # useGlobalPkgs = true;
                   useUserPackages = true;
                   ###
                   sharedModules = [
                     sops-nix.homeManagerModules.sops
+                    stylix.homeModules.stylix
                     (_: {
                       nixpkgs.overlays = [
                         overlay-master
