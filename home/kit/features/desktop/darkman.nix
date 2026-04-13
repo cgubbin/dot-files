@@ -3,50 +3,44 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf optionalString concatStringsSep;
   wayland-cfg = config.home-config.desktop.wayland;
-  cfg = config.home-config.desktop;
-in
-{
+  cfg = config.home-config.theme;
+in {
   config = mkIf pkgs.stdenv.isLinux {
-    services.darkman =
-      let
-        swaync-client = lib.getExe' pkgs.swaynotificationcenter "swaync-client";
-        systemctl = lib.getExe' pkgs.systemd "systemctl";
-        killall = lib.getExe' pkgs.toybox "killall";
-        albert = lib.getExe pkgs.master.albert;
+    services.darkman = let
+      swaync-client = lib.getExe' pkgs.swaynotificationcenter "swaync-client";
+      systemctl = lib.getExe' pkgs.systemd "systemctl";
+      killall = lib.getExe' pkgs.toybox "killall";
+      albert = lib.getExe pkgs.master.albert;
 
-        find-hm-generation =
-          let
-            home-manager = "${pkgs.home-manager}/bin/home-manager";
-            grep = lib.getExe' pkgs.toybox "grep";
-            head = lib.getExe' pkgs.toybox "head";
-            find = lib.getExe' pkgs.toybox "find";
-          in
-          ''
-            for line in $(${home-manager} generations | ${grep} -o '/.*')
-            do
-              res=$(${find} $line | ${grep} specialisation | ${head} -1)
-              output=$?
-              if [[ $output -eq 0 ]] && [[ $res != "" ]]; then
-                  echo $res
-                  exit
-              fi
-            done
-          '';
+      find-hm-generation = let
+        home-manager = "${pkgs.home-manager}/bin/home-manager";
+        grep = lib.getExe' pkgs.toybox "grep";
+        head = lib.getExe' pkgs.toybox "head";
+        find = lib.getExe' pkgs.toybox "find";
+      in ''
+        for line in $(${home-manager} generations | ${grep} -o '/.*')
+        do
+          res=$(${find} $line | ${grep} specialisation | ${head} -1)
+          output=$?
+          if [[ $output -eq 0 ]] && [[ $res != "" ]]; then
+              echo $res
+              exit
+          fi
+        done
+      '';
 
-        switch-theme-script =
-          theme:
-          concatStringsSep "\n" [
-            "$(${find-hm-generation})/${theme}/activate"
-            "${killall} -SIGUSR1 hx" # enabled by default
-            (optionalString wayland-cfg.hyprland.enable "${systemctl} --user restart hyprpaper.service")
-            (optionalString wayland-cfg.enable "${swaync-client} -rs") # reload CSS for swaync (notification center)
-            (optionalString wayland-cfg.enable "${albert} restart")
-          ];
-      in
+      switch-theme-script = theme:
+        concatStringsSep "\n" [
+          "$(${find-hm-generation})/${theme}/activate"
+          "${killall} -SIGUSR1 hx" # enabled by default
+          (optionalString wayland-cfg.hyprland.enable "${systemctl} --user restart hyprpaper.service")
+          (optionalString wayland-cfg.enable "${swaync-client} -rs") # reload CSS for swaync (notification center)
+          (optionalString wayland-cfg.enable "${albert} restart")
+        ];
+    in
       mkIf cfg.stylix.enable {
         enable = true;
         darkModeScripts = {
@@ -63,7 +57,7 @@ in
     systemd.user.services.darkman.Unit.X-SwitchMethod = "restart";
     xdg.portal = {
       enable = true;
-      extraPortals = [ pkgs.darkman ];
+      extraPortals = [pkgs.darkman];
       config.common."org.freedesktop.impl.portal.Settings" = "darkman";
     };
   };
