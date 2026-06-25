@@ -151,39 +151,14 @@
             end
             out.updated = now
 
-            if workspace_name == "metrology" then
-              if out.area == nil then out.area = "metrology" end
-              if out.status == nil then out.status = "seed" end
-              if out.kind == nil then out.kind = "note" end
-              if out.project == nil then out.project = "" end
-              if out.instrument == nil then out.instrument = "" end
-              if out.sample == nil then out.sample = "" end
-
-              if out.type == "patent" then
-                if out.source == nil then out.source = "model" end
-                if out.confidence == nil then out.confidence = "low" end
-                if out.review_status == nil then out.review_status = "unreviewed" end
-                if out.importance == nil then out.importance = 3 end
-                if out.primary_source == nil then out.primary_source = "patent_url" end
-                if out.patent_url == nil then out.patent_url = "" end
-                if out.pdf_path == nil then out.pdf_path = "" end
-                if out.pdf_url == nil then out.pdf_url = "" end
-                if out.key_pages == nil then out.key_pages = {} end
-                if out.modality == nil then out.modality = "unknown" end
-                if out.signal_type == nil then out.signal_type = {} end
-                if out.contrast_mechanism == nil then out.contrast_mechanism = {} end
-                if out.has_new_signal == nil then out.has_new_signal = false end
-                if out.has_new_geometry == nil then out.has_new_geometry = false end
-                if out.has_new_processing == nil then out.has_new_processing = false end
-                if out.ml_component == nil then out.ml_component = false end
-              end
-            elseif workspace_name == "premed" then
+            if workspace_name == "premed" then
               if out.area == nil then out.area = "premed" end
               if out.status == nil then out.status = "active" end
-              if out.kind == nil then out.kind = "note" end
+              if out.subject == nil then out.subject = "" end
               if out.topic == nil then out.topic = "" end
-              if out.course == nil then out.course = "" end
-              if out.exam == nil then out.exam = "" end
+              if out.type == nil then out.type = "" end
+              if out.mastery == nil then out.mastery = "new" end
+              if out.importance == nil then out.importance = "high" end
             else
               if out.area == nil then out.area = workspace_name end
               if out.status == nil then out.status = "seed" end
@@ -308,126 +283,7 @@
         action = "<cmd>Obsidian rename<cr>";
         options.desc = "Rename note";
       }
-
-      {
-        mode = "n";
-        key = "<leader>op";
-        action = "<cmd>OpenPatentSource<cr>";
-        options.desc = "Open patent source";
-      }
-      {
-        mode = "n";
-        key = "<leader>oP";
-        action = "<cmd>OpenPatentPdf<cr>";
-        options.desc = "Open patent PDF";
-      }
-      {
-        mode = "n";
-        key = "<leader>ov";
-        action = "<cmd>ValidatePatentNote<cr>";
-        options.desc = "Validate patent note";
-      }
-      {
-        mode = "n";
-        key = "<leader>o,";
-        action = "<cmd>SuggestPatentPdfPath<cr>";
-        options.desc = "Suggest patent PDF path";
-      }
-
-      {
-        mode = "n";
-        key = "<leader>oF";
-        action = "<cmd>NormalizePatentFrontmatter<cr>";
-        options.desc = "Normalize patent frontmatter";
-      }
-      {
-        mode = "n";
-        key = "<leader>o/";
-        action = "<cmd>PatentSearchMissing<cr>";
-        options.desc = "Search MISSING markers";
-      }
-      {
-        mode = "n";
-        key = "<leader>o?";
-        action = "<cmd>PatentSearchNovelty<cr>";
-        options.desc = "Search novelty notes";
-      }
-      {
-        mode = "n";
-        key = "<leader>oq";
-        action = "<cmd>PatentSearchOpenQuestions<cr>";
-        options.desc = "Search open questions";
-      }
-      {
-        mode = "n";
-        key = "<leader>oR";
-        action = "<cmd>PatentReviewSearch<cr>";
-        options.desc = "Patent review quickfix";
-      }
-      {
-        mode = "n";
-        key = "<leader>]m";
-        action = "<cmd>PatentNextMissing<cr>";
-        options.desc = "Next MISSING";
-      }
-      {
-        mode = "n";
-        key = "<leader>]g";
-        action = "<cmd>PatentNextSectionGap<cr>";
-        options.desc = "Next section heading";
-      }
-      {
-        mode = "v";
-        key = "<leader>ok";
-        action = "<cmd>PatentLink<cr>";
-        options.desc = "Insert wikilink";
-      }
-      {
-        mode = "v";
-        key = "<leader>oK";
-        action = "<cmd>PatentLinkCreate<cr>";
-        options.desc = "Insert wikilink and create note";
-      }
     ];
-
-    extraConfigLuaPost = ''
-      local patents = require("kit.functions.patents")
-
-      vim.api.nvim_create_user_command("OpenPatentSource", patents.open_patent_source, {})
-      vim.api.nvim_create_user_command("OpenPatentPdf", patents.open_patent_pdf, {})
-      vim.api.nvim_create_user_command("ValidatePatentNote", patents.validate_patent_note, {})
-      vim.api.nvim_create_user_command("PatentNormalizeFrontmatter", patents.normalize_frontmatter, {})
-      vim.api.nvim_create_user_command("SuggestPatentPdfPath", patents.suggest_patent_pdf_path, {})
-      vim.api.nvim_create_user_command("PatentLink", patents.insert_wikilink, { range = true })
-      vim.api.nvim_create_user_command("PatentLinkCreate", patents.insert_or_create_wikilink, { range = true })
-      vim.api.nvim_create_user_command("PatentSearchMissing", patents.search_missing, {})
-      vim.api.nvim_create_user_command("PatentSearchNovelty", patents.search_novelty, {})
-      vim.api.nvim_create_user_command("PatentSearchOpenQuestions", patents.search_open_questions, {})
-      vim.api.nvim_create_user_command("PatentReviewSearch", patents.review_search, {})
-      vim.api.nvim_create_user_command("PatentNextMissing", patents.next_missing, {})
-      vim.api.nvim_create_user_command("PatentNextSectionGap", patents.next_section_gap, {})
-
-      local triage = require("kit.functions.patent_triage")
-
-      vim.api.nvim_create_user_command("PatentPromote", triage.promote, {})
-      vim.api.nvim_create_user_command("PatentSkip", triage.mark_skip, {})
-      vim.api.nvim_create_user_command("PatentKeep", triage.mark_keep, {})
-      vim.api.nvim_create_user_command("PatentNextInbox", triage.next_inbox, {})
-
-      vim.api.nvim_create_autocmd("BufEnter", {
-        callback = function()
-          local path = vim.api.nvim_buf_get_name(0)
-          if path:match("/01_Patents/") then
-            vim.cmd("silent! OpenPatentPdf")
-          end
-          if path:match("/98_INBOX/") then
-            vim.cmd("silent! OpenPatentPdf")
-          end
-        end
-      })
-
-      patents.register_autocmds()
-    '';
 
     autoCmd = [
       {
@@ -495,10 +351,6 @@
 
             vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
 
-            local ok, patents = pcall(require, "kit.functions.patents")
-            if ok then
-              patents.validate_current_on_save()
-            end
           end
         '';
       }

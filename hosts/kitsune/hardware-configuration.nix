@@ -16,6 +16,10 @@
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];
   boot.extraModulePackages = [];
+  # Bug in bios
+  # boot.kernelParams = [
+  # "acpi_mask_gpe=0x6E"
+  # ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/f64486c8-9944-4e44-ae2d-269ff5e21652";

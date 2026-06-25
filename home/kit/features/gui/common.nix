@@ -3,16 +3,15 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf;
   cfg = config.home-config.gui;
-in
-{
+in {
   home.packages = mkIf cfg.utils.enable (
-    with pkgs;
-    [
+    with pkgs; [
       zathura
+      qbittorrent
+      vlc
     ]
   );
 }

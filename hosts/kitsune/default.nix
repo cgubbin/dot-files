@@ -69,6 +69,8 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
+
+  services.resolved.enable = true;
   # services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
@@ -84,7 +86,7 @@
   programs.fish.enable = true;
 
   virtualisation.docker = {
-    enable = true;
+    enable = false;
   };
 
   programs.steam = {
@@ -98,7 +100,9 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
     lshw
+    fwupd
   ];
+  services.fwupd.enable = true;
 
   environment.sessionVariables = {
     WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
