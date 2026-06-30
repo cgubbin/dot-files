@@ -1,0 +1,1 @@
+command="restic serve --stdio",restrict,no-agent-forwarding,no-port-forwarding,no-pty,no-user-rc,no-X11-forwarding ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAPiZ+B+qpiHYMqmZaZERZ4R2V2KLBZHVaWcDn7htM4p root@pi5

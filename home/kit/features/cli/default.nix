@@ -7,6 +7,7 @@
     ./tools.nix
     ./navi.nix
     ./nvtop.nix
+    ./restic.nix
     ./skim.nix
     ./syncthing.nix
     ./yazi.nix

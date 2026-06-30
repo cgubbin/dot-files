@@ -8,16 +8,9 @@ in {
   programs.nixvim = {
     plugins.rustaceanvim = {
       enable = true;
-      lazyLoad = {
-        enable = true;
-        settings.ft = ["rust"];
-      };
       settings = {
         server = {
           cmd = [
-            "rustup"
-            "run"
-            "nightly"
             "rust-analyzer"
           ];
           on_attach = helpers.mkRaw ''

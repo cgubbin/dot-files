@@ -66,6 +66,22 @@
     hashedPasswordFile = config.sops.secrets.kitsune_passwd.path;
   };
 
+  users.users.backup = {
+    isNormalUser = true;
+
+    description = "Restic backup user";
+
+    home = "/var/lib/backup";
+    createHome = true;
+
+    shell = "${pkgs.shadow}/bin/nologin";
+
+    openssh.authorizedKeys.keyFiles = [
+      ../../assets/keys/backup.pub
+      # Pi backup public key goes here
+    ];
+  };
+
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
@@ -92,6 +108,11 @@
   programs.steam = {
     enable = true;
     extraCompatPackages = [pkgs.proton-ge-bin];
+  };
+
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
   };
 
   # List packages installed in system profile. To search, run:

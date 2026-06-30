@@ -3,17 +3,14 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf;
   cfg = config.home-config.gui;
-in
-{
+in {
   home.packages = mkIf (cfg.utils.enable && pkgs.stdenv.isLinux) (
-    with pkgs;
-    [
+    with pkgs; [
       _1password-gui
-      drawio
+      # drawio
       keymapp
       obsidian
       protonvpn-gui
