@@ -3,14 +3,12 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf;
   cfg = config.home-config.desktop;
   enabled = pkgs.stdenv.isLinux && cfg.wayland.enable;
   dir = ./.;
-in
-{
+in {
   config = mkIf enabled {
     home = {
       sessionVariables.GOLDENDICT_FORCE_WAYLAND = "1";
@@ -23,6 +21,16 @@ in
 
     xdg.configFile."albert/config".source = ./config.toml;
     xdg.configFile."albert/websearch/engines.json".source = ./websearch-engines.json;
+    xdg.configFile."autostart/albert.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Albert
+      Comment=Application launcher
+      Exec=albert
+      Terminal=false
+      Categories=Utility;
+      X-GNOME-Autostart-enabled=true
+    '';
     # xdg.configFile = {
     #   "albert/config".source = config.lib.file.mkOutOfStoreSymlink "${toString dir}/config.toml";
     #   "albert/websearch/engines.json".source =

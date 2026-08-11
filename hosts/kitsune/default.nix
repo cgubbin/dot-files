@@ -55,6 +55,7 @@
   networking.networkmanager.enable = true;
 
   users.mutableUsers = false;
+  users.groups.backup = {};
   users.users.kit = {
     isNormalUser = true;
     description = "Christopher Gubbin";
@@ -67,14 +68,15 @@
   };
 
   users.users.backup = {
-    isNormalUser = true;
+    isSystemUser = true;
+    group = "backup";
 
     description = "Restic backup user";
 
     home = "/var/lib/backup";
     createHome = true;
 
-    shell = "${pkgs.shadow}/bin/nologin";
+    shell = "${pkgs.bash}/bin/bash";
 
     openssh.authorizedKeys.keyFiles = [
       ../../assets/keys/backup.pub
@@ -98,6 +100,29 @@
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "kit";
+
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
+
+    sftpServerExecutable = "internal-sftp";
+
+    extraConfig = ''
+      Match User backup
+        ChrootDirectory none
+        ForceCommand internal-sftp
+        AllowTcpForwarding no
+        X11Forwarding no
+        PermitTTY no
+    '';
+  };
+
+  networking.firewall.trustedInterfaces = ["tailscale0"];
 
   programs.fish.enable = true;
 
@@ -192,5 +217,28 @@
       enable = true;
       enableOffloadCmd = true;
     };
+  };
+
+  systemd.services.disable-acpi-gpe6e = {
+    description = "Disable storming ACPI GPE 6E";
+    wantedBy = ["multi-user.target"];
+    after = ["sysinit.target"];
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+
+    script = ''
+      set +e
+
+      gpe=/sys/firmware/acpi/interrupts/gpe6E
+
+      if [ -e "$gpe" ]; then
+        echo disable > "$gpe" 2>/dev/null || true
+      fi
+
+      exit 0
+    '';
   };
 }

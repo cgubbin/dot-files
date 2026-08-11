@@ -3,12 +3,10 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf;
   cfg = config.home-config.desktop.wayland;
-in
-{
+in {
   wayland.windowManager.hyprland.settings = mkIf (cfg.hyprland.enable && pkgs.stdenv.isLinux) {
     general = {
       gaps_in = 5;
@@ -65,7 +63,6 @@ in
       ];
     };
     dwindle = {
-      pseudotile = true;
       preserve_split = true;
       smart_split = true;
     };

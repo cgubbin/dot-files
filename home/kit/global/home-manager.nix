@@ -1,9 +1,9 @@
 {
   config,
   pkgs,
+  # lib,
   ...
-}:
-{
+}: {
   home = {
     username = "kit";
     sessionVariables = {
@@ -16,8 +16,12 @@
     config = {
       allowUnfree = true;
       allowUnfreePredicate = _: true;
+      # allowUnfreePredicate = pkg:
+      #   builtins.elem (lib.getName pkg) [
+      #     "wezterm.nvim"
+      #   ];
     };
   };
   programs.home-manager.enable = true;
-  home.stateVersion = "25.05";
+  home.stateVersion = "26.05";
 }

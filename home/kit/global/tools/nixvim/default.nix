@@ -17,5 +17,7 @@
     vimdiffAlias = true;
     impureRtp = true;
     withPython3 = true;
+
+    nixpkgs.useGlobalPackages = true;
   };
 }

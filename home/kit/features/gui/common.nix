@@ -12,6 +12,8 @@ in {
       zathura
       qbittorrent
       vlc
+
+      google-chrome
     ]
   );
 }

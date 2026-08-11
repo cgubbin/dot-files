@@ -13,7 +13,7 @@ in {
       # drawio
       keymapp
       obsidian
-      protonvpn-gui
+      proton-vpn
       vlc
       zed-editor
       zotero
